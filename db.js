@@ -1,5 +1,6 @@
 const { Pool } = require('pg');
-require('dotenv');
+const dotenv = require('dotenv');
+dotenv.config();
 
 const pool = new Pool({
   user: 'postgres',
@@ -9,6 +10,4 @@ const pool = new Pool({
   database: 'online_mart',
 });
 
-module.exports = {
-  query: (text, params) => pool.query(text, params),
-};
+module.exports = pool;
