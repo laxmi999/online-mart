@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 const db = require('./src/config/db.config');
 
 const userRoutes = require('./src/routes/userRoutes');
+const auth = require('./src/middlewares/auth');
 
 const app = express();
 const PORT = 8080;
@@ -22,6 +23,7 @@ db.authenticate()
   .catch((error) => console.log('Failed to connect the database:', error));
 
 app.use('/users', userRoutes);
+app.use(auth.verifyToken);
 
 app.get('/', (req, res) => {
   res.status(200).send({
