@@ -1,9 +1,9 @@
 const db = require('../models');
 const User = db.User;
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
 require('dotenv').config();
-const Op = db.Sequelize.Op;
+const auth = require('../middlewares/auth');
+// const Op = db.Sequelize.Op;
 
 // const users = await User.findAll();
 
@@ -39,11 +39,13 @@ module.exports = {
 
   async userInfo(req, res) {
     try {
-      const { id, username, contactNo, fullName } = req.body;
-      const user = await User.findOne({ where: { id } });
+      const currentUser = req.user;
+      const { username, contactNo, fullName } = req.body;
+      const user = await User.findOne({ where: { id: currentUser.id } });
       if (!user) {
         return res.status(404).json({ message: 'User not found.' });
       }
+      // return res.json(user);
       user.update({ username, contactNo, fullName });
       return res
         .status(200)
