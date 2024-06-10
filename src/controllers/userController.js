@@ -11,7 +11,9 @@ module.exports = {
   async register(req, res) {
     try {
       const { email, password } = req.body;
-      const hashedPassword = bcrypt.hash(password, process.env.SALT);
+      const saltRounds = parseInt(process.env.SALT_ROUNDS);
+      const salt = await bcrypt.genSalt(saltRounds);
+      const hashedPassword = await bcrypt.hash(password, salt);
       const user = await User.create({
         email,
         encryptedPassword: hashedPassword,

@@ -2,13 +2,18 @@ const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
 exports.generateToken = (user) => {
-  return jwt.sign(
-    { id: user.id, email: user.email },
-    process.env.JWT_SECRET_KEY,
-    {
-      expiresIn: '3h',
-    }
-  );
+  try {
+    return jwt.sign(
+      { id: user.id, email: user.email },
+      process.env.JWT_SECRET_KEY,
+      {
+        expiresIn: '3h',
+      }
+    );
+  } catch (error) {
+    console.log(error);
+    return res.status(400).json({ error: error.message });
+  }
 };
 
 exports.verifyToken = (req, res, next) => {
@@ -22,5 +27,6 @@ exports.verifyToken = (req, res, next) => {
     next();
   } catch (error) {
     console.log(error);
+    return res.status(400).json({ error: error.message });
   }
 };
