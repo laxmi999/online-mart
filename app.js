@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const db = require('./src/config/db.config');
+// const db = require('./src/config/db.config');
+const db = require('./src/models/index');
 
 const userRoutes = require('./src/routes/userRoutes');
 const auth = require('./src/middlewares/auth');
@@ -16,7 +17,8 @@ app.use(bodyParser.json());
 app.listen(PORT, (err) => {
   if (!err) {
     console.log(`Live on http://localhost:${PORT}`);
-    db.authenticate()
+    db.sequelize
+      .authenticate()
       .then(() => console.log('Successfully connected to the database!'))
       .catch((error) => console.log('Failed to connect the database:', error));
   } else {

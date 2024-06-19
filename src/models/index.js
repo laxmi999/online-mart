@@ -5,10 +5,19 @@ const fs = require('fs');
 const path = require('path');
 const Sequelize = require('sequelize');
 const basename = path.basename(__filename);
-const config = require('../config/db.config.js');
+const config = require('../config/db_config.js');
 const db = {};
 
-const sequelize = config;
+const sequelize = new Sequelize(
+  config.database,
+  config.username,
+  config.password,
+  {
+    host: config.host,
+    port: config.port,
+    dialect: 'postgres',
+  }
+);
 
 fs.readdirSync(__dirname)
   .filter((file) => {
