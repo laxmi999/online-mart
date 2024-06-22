@@ -16,17 +16,24 @@ module.exports = {
     try {
       const currentUser = req.user;
       const user = await User.findOne({ where: { id: currentUser.id } });
-      console.log(user);
+      if (!user.isAdmin) {
+        return res.status(400).json({ message: "You don't have permission." });
+      }
       const { categoryName } = req.body;
-      if (user.isAdmin) {
-        const category = await Category.create({
+      const existingCategory = await Category.findOne({
+        where: {
+          categoryName,
+        },
+      });
+      if (existingCategory) {
+        res.status(400).json({ message: 'Category already exists.' });
+      } else {
+        await Category.create({
           categoryName,
         });
         return res
           .status(201)
           .json({ message: 'New category added successfully!' });
-      } else {
-        return res.status(400).json({ message: "You don't have permission." });
       }
     } catch (error) {
       return res.status(400).json({ message: error.message });

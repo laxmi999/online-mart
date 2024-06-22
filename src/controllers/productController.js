@@ -9,20 +9,25 @@ module.exports = {
     try {
       const currentUser = req.user;
       const user = await User.findOne({ where: { id: currentUser.id } });
-      const { productName, description, price, category, stock } = req.body;
+      const { productName, description, price, stock, category } = req.body;
       if (user.isMerchant) {
         const merchant = await Merchant.findOne({
           where: { userId: currentUser.id },
         });
         const merId = merchant.id;
-        await Product.create({
+        const product = await Product.create({
           productName,
           description,
           price,
           merchantId: merId,
-          category,
           stock,
         });
+        if (category.length > 0) {
+          const categories = await Category.findAll({
+            where: { id: category },
+          });
+          await product.addCategory(categories);
+        }
         return res.json({ message: 'Product added sucessfully!' });
       } else {
         return res.json({ message: 'You are not a merchant.' });
@@ -32,7 +37,7 @@ module.exports = {
     }
   },
 
-  async addCategoryToProduct(req, res) {
+  async myProducts(req, res) {
     try {
       const currentUser = req.user;
       const user = await User.findOne({ where: { id: currentUser.id } });
